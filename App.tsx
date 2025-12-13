@@ -1,4 +1,3 @@
-
 import React, { useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Loader } from '@react-three/drei';
@@ -7,7 +6,34 @@ import { UIOverlay } from './components/UIOverlay';
 import { GestureController } from './components/GestureController';
 import { TreeMode } from './types';
 
-// Simple Error Boundary to catch 3D resource loading errors (like textures)
+// ------------------------------------------------------------------
+// 📸 这里是你截图里的20张照片
+// 只要你完成了【第一步】把 photos 文件夹放进 public 里，这里就能自动读取
+// ------------------------------------------------------------------
+const MY_PHOTOS = [
+  "/photos/1.jpg",
+  "/photos/2.jpg",
+  "/photos/3.jpg",
+  "/photos/4.jpg",
+  "/photos/5.jpg",
+  "/photos/6.jpg",
+  "/photos/7.jpg",
+  "/photos/8.jpg",
+  "/photos/9.jpg",
+  "/photos/10.jpg",
+  "/photos/11.jpg",
+  "/photos/12.jpg",
+  "/photos/13.jpg",
+  "/photos/14.jpg",
+  "/photos/15.jpg",
+  "/photos/16.jpg",
+  "/photos/17.jpg",
+  "/photos/18.jpg",
+  "/photos/19.jpg",
+  "/photos/20.jpg"
+];
+
+// Simple Error Boundary to catch 3D resource loading errors
 class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
   constructor(props: any) {
     super(props);
@@ -24,12 +50,11 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
 
   render() {
     if (this.state.hasError) {
-      // You can customize this fallback UI
       return (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/80 text-[#D4AF37] font-serif p-8 text-center">
           <div>
             <h2 className="text-2xl mb-2">Something went wrong</h2>
-            <p className="opacity-70">A resource failed to load (likely a missing image). Check the console for details.</p>
+            <p className="opacity-70">A resource failed to load. Please check if the 'photos' folder is inside 'public'.</p>
             <button 
               onClick={() => this.setState({ hasError: false })}
               className="mt-4 px-4 py-2 border border-[#D4AF37] hover:bg-[#D4AF37] hover:text-black transition-colors"
@@ -40,7 +65,6 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
         </div>
       );
     }
-
     return this.props.children;
   }
 }
@@ -48,7 +72,9 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
 export default function App() {
   const [mode, setMode] = useState<TreeMode>(TreeMode.FORMED);
   const [handPosition, setHandPosition] = useState<{ x: number; y: number; detected: boolean }>({ x: 0.5, y: 0.5, detected: false });
-  const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
+  
+  // ✅ 核心修改：初始化时直接使用你的20张照片，而不是空数组 []
+  const [uploadedPhotos, setUploadedPhotos] = useState<string[]>(MY_PHOTOS);
 
   const toggleMode = () => {
     setMode((prev) => (prev === TreeMode.FORMED ? TreeMode.CHAOS : TreeMode.FORMED));
@@ -84,9 +110,9 @@ export default function App() {
         dataStyles={{ color: '#D4AF37', fontFamily: 'Cinzel' }}
       />
       
+      {/* 这里的 hasPhotos 判断现在会直接为 true，所以一打开就是树，不会显示上传按钮 */}
       <UIOverlay mode={mode} onToggle={toggleMode} onPhotosUpload={handlePhotosUpload} hasPhotos={uploadedPhotos.length > 0} />
       
-      {/* Gesture Control Module */}
       <GestureController currentMode={mode} onModeChange={setMode} onHandPosition={handleHandPosition} />
     </div>
   );
